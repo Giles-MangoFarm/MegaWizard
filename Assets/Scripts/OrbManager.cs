@@ -22,6 +22,9 @@ public class OrbManager : MonoBehaviour
     public float autoClickCost = 10f;
     public float autoClickUpgradeLevel;
 
+    public float familiarAmount = 0;
+    public float familiarStrength = 0.1f;
+
     public float clickUpgradeCost = 100f;
     public float clickUpgradeLevel;
 
@@ -30,8 +33,8 @@ public class OrbManager : MonoBehaviour
     public int mat2 = 0;
     public float mat2Cost = 200f;
 
-    public int alchemyMat1Cost = 1;
-    public int alchemyMat2Cost = 5;
+    public int alchemyAutoClickCost = 1;
+    public int alchemyClickUpgradeCost = 5;
 
     // Start is called before the first frame update
     void Start()
@@ -42,6 +45,7 @@ public class OrbManager : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+        insightPerSec = familiarAmount * familiarStrength;
         insight += insightPerSec * Time.deltaTime;
 
         insightText.text = "i: " + insight.ToString("F1");
@@ -50,7 +54,8 @@ public class OrbManager : MonoBehaviour
         clickUpgradeText.text = "Research Technique \ni: " + clickUpgradeCost.ToString("F1") +"\n" + clickUpgradeLevel;
         mat1Text.text = "Material 1 \ni: " + mat1Cost + "\n" + mat1;
         mat2Text.text = "Material 2 \ni: " + mat2Cost + "\n" + mat2;
-        autoClickAlchemyText.text = "Strengthen Familiar \nM1 x" + alchemyMat1Cost + " + M2 x" + alchemyMat1Cost;
+        autoClickAlchemyText.text = "Strengthen Familiar \nM1 x" + alchemyAutoClickCost + " + M2 x" + alchemyAutoClickCost;
+        clickUpgradeAlchemyText.text = "Refine Orb \nM1 x" + alchemyClickUpgradeCost + " + M2 x" + alchemyClickUpgradeCost;
     }
 
     public void Click()
@@ -63,7 +68,7 @@ public class OrbManager : MonoBehaviour
         if (insight >= autoClickCost) 
         {
         autoClickUpgradeLevel++;
-        insightPerSec += 0.1f;
+        familiarAmount++;
         insight -= autoClickCost;
         autoClickCost *= 1.07f;
         
@@ -101,11 +106,24 @@ public class OrbManager : MonoBehaviour
 
     public void AutoClickAlchemy()
     {
-        if (mat1 + mat2 >= alchemyMat1Cost)
+        if (mat1 + mat2 >= alchemyAutoClickCost)
         {
-            insightPerSec += autoClickUpgradeLevel;
-            mat1 -= alchemyMat1Cost;
-            mat2 -= alchemyMat1Cost;
+            insightPerSec *= 2f;
+            familiarStrength *= 2f;
+            mat1 -= alchemyAutoClickCost;
+            mat2 -= alchemyAutoClickCost;
+            alchemyAutoClickCost *= 2;
+        }
+    }
+
+    public void DoubleClickAlchemy()
+    {
+        if (mat1 + mat2 >= alchemyClickUpgradeCost)
+        {
+            insightAmount += clickUpgradeLevel;
+            mat1 -= alchemyClickUpgradeCost;
+            mat2 -= alchemyClickUpgradeCost;
+            alchemyClickUpgradeCost *= 2;
         }
     }
 }
